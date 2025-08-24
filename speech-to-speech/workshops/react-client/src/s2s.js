@@ -453,7 +453,7 @@ class S2sChatBot extends React.Component {
                         {Object.keys(this.state.chatMessages).map((key,index) => {
                             const msg = this.state.chatMessages[key];
                             //if (msg.stopReason === "END_TURN" || msg.role === "USER")
-                                return <div className='item'>
+                                return <div key={key} className='item'>
                                     <div className={msg.role === "USER"?"user":"bot"} onClick={()=> 
                                             this.setState({
                                                 showEventJson: true, 

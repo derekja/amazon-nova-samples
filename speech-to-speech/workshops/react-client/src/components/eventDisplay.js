@@ -117,10 +117,10 @@ class S2sEventDisplay extends React.Component {
                 </Toggle>
                 </div>
                 <div className='events'>
-                    {this.state.eventsByContentName.map(event=>{
+                    {this.state.eventsByContentName.map((event, index)=>{
                         if (!this.state.displayUsage && event.name === "usageEvent")
                             return;
-                        else return <div className={
+                        else return <div key={event.key || index} className={
                                 event.name === "toolUse"? "event-tool": 
                                 event.name === "usageEvent"? "event-usage": 
                                 event.interrupted === true?"event-int":
@@ -133,9 +133,9 @@ class S2sEventDisplay extends React.Component {
                             <Icon name={event.type === "in"? "arrow-down": "arrow-up"} />&nbsp;&nbsp;
                             {event.name}
                             {event.events.length > 1? ` (${event.events.length})`: ""}
-                            <div class="tooltip">
-                                <pre id="jsonDisplay">{event.events.map(e=>{
-                                    return JSON.stringify(e,null,2);
+                            <div className="tooltip">
+                                <pre id="jsonDisplay">{event.events.map((e, eventIndex)=>{
+                                    return <div key={eventIndex}>{JSON.stringify(e,null,2)}</div>;
                                 })
                             }</pre>
                             </div>
@@ -156,7 +156,7 @@ class S2sEventDisplay extends React.Component {
                     >
                         <div className='eventdetail'>
                         <pre id="jsonDisplay">
-                            {this.state.selectedEvent && this.state.selectedEvent.events.map(e=>{
+                            {this.state.selectedEvent && this.state.selectedEvent.events.map((e, eventIndex)=>{
                                 const eventType = Object.keys(e?.event)[0];
                                 if (eventType === "audioInput" || eventType === "audioOutput")
                                     e.event[eventType].content = e.event[eventType].content.substr(0,10) + "...";
@@ -172,7 +172,7 @@ class S2sEventDisplay extends React.Component {
                                 });
                                 var displayJson = { ...e };
                                 delete displayJson.timestamp;
-                                return ts + "\n" + JSON.stringify(displayJson,null,2) + "\n";
+                                return <div key={eventIndex}>{ts + "\n" + JSON.stringify(displayJson,null,2) + "\n"}</div>;
                             })}
                         </pre>
                         </div>
