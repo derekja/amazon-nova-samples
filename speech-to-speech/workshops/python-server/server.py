@@ -200,25 +200,37 @@ async def websocket_handler(websocket):
     except websockets.exceptions.ConnectionClosed:
         print("WebSocket connection closed")
     finally:
-        # Clean up
-        if stream_manager:
-            try:
-                await stream_manager.close()
-            except Exception as e:
-                print(f"Error closing stream manager: {e}")
+        # Clean up in proper order
+        print("Starting WebSocket cleanup...")
         
+        # First, cancel the forward task
         if 'forward_task' in locals() and not forward_task.done():
+            print("Cancelling forward task...")
             forward_task.cancel()
             try:
-                await forward_task
-            except asyncio.CancelledError:
+                await asyncio.wait_for(forward_task, timeout=1.0)
+            except (asyncio.CancelledError, asyncio.TimeoutError):
                 pass
             except Exception as e:
                 print(f"Error cancelling forward task: {e}")
         
-        if websocket and not websocket.closed:
+        # Then close the stream manager with more time
+        if stream_manager:
             try:
-                await websocket.close()
+                print("Closing stream manager...")
+                await stream_manager.close()
+                # Give extra time for proper cleanup
+                await asyncio.sleep(0.2)
+            except Exception as e:
+                print(f"Error closing stream manager: {e}")
+        
+        if websocket:
+            try:
+                # Check if websocket is still open before trying to close
+                if hasattr(websocket, 'closed') and not websocket.closed:
+                    await websocket.close()
+                elif hasattr(websocket, 'close_code') and websocket.close_code is None:
+                    await websocket.close()
             except Exception as e:
                 print(f"Error closing websocket: {e}")
         

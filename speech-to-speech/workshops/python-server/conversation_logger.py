@@ -136,34 +136,41 @@ class ConversationLogger:
             print(f"Error logging session end: {e}")
     
     def get_last_session_history(self):
-        """Get chat history from the last session in the log file"""
+        """Get chat history from the last meaningful session in the log file"""
         try:
             if not os.path.exists(self.log_file):
                 return []
-            
-            chat_history = []
-            current_session_messages = []
             
             with self.lock:
                 with open(self.log_file, 'r', encoding='utf-8') as f:
                     lines = f.readlines()
             
-            # Process lines in reverse to find the most recent session
-            in_last_session = False
-            for line in reversed(lines):
+            # Find all complete sessions first
+            sessions = []
+            current_session = []
+            in_session = False
+            
+            for line in lines:
                 line = line.strip()
                 if not line:
                     continue
                 
-                if '[SESSION_END]' in line:
-                    in_last_session = True
-                    continue
-                elif '[SESSION_START]' in line:
-                    if in_last_session:
-                        break
-                    continue
+                if '[SESSION_START]' in line:
+                    in_session = True
+                    current_session = []
+                elif '[SESSION_END]' in line:
+                    if in_session and current_session:
+                        sessions.append(current_session[:])
+                    in_session = False
+                    current_session = []
+                elif in_session:
+                    current_session.append(line)
+            
+            # Find the last session with meaningful content (more than just greetings)
+            for session in reversed(sessions):
+                session_messages = []
                 
-                if in_last_session:
+                for line in session:
                     # Parse the log line: timestamp [ROLE] [STAGE]: content
                     try:
                         # Find the role part: [USER], [ASSISTANT], etc.
@@ -198,7 +205,7 @@ class ConversationLogger:
                         
                         # Convert role format for S2S events
                         if role in ['USER', 'ASSISTANT', 'SYSTEM']:
-                            current_session_messages.append({
+                            session_messages.append({
                                 'role': role,
                                 'content': content
                             })
@@ -206,16 +213,34 @@ class ConversationLogger:
                     except Exception as e:
                         print(f"Error parsing log line: {e}")
                         continue
+                
+                # Check if this session has meaningful content
+                # Skip sessions that are just greetings or very short
+                meaningful_content = False
+                for msg in session_messages:
+                    content_lower = msg['content'].lower()
+                    # Skip generic greetings
+                    if not any(greeting in content_lower for greeting in [
+                        "hey there", "how's it going", "is everything alright", 
+                        "hi, i'm a pirate", "hey!", "hello"
+                    ]) and len(msg['content'].strip()) > 15:
+                        meaningful_content = True
+                        break
+                
+                if meaningful_content and len(session_messages) >= 2:
+                    # This session has meaningful content, use it
+                    # Remove duplicates
+                    seen_content = set()
+                    chat_history = []
+                    for msg in session_messages:
+                        if msg['content'] not in seen_content:
+                            chat_history.append(msg)
+                            seen_content.add(msg['content'])
+                    
+                    return chat_history[:10]  # Limit to last 10 messages
             
-            # Reverse to get chronological order and remove duplicates
-            seen_content = set()
-            for msg in reversed(current_session_messages):
-                # Simple deduplication by content
-                if msg['content'] not in seen_content:
-                    chat_history.append(msg)
-                    seen_content.add(msg['content'])
-            
-            return chat_history[:10]  # Limit to last 10 messages to avoid overwhelming context
+            # If no meaningful session found, return empty
+            return []
             
         except Exception as e:
             print(f"Error reading chat history: {e}")

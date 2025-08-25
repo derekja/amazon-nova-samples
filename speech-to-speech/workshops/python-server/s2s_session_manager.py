@@ -36,6 +36,7 @@ class S2sSessionManager:
         self.output_queue = asyncio.Queue()
         
         self.response_task = None
+        self.audio_task = None
         self.stream = None
         self.is_active = False
         self.bedrock_client = None
@@ -85,7 +86,7 @@ class S2sSessionManager:
             self.response_task = asyncio.create_task(self._process_responses())
 
             # Start processing audio input
-            asyncio.create_task(self._process_audio_input())
+            self.audio_task = asyncio.create_task(self._process_audio_input())
             
             # Log session start
             self.conversation_logger.log_session_start()
@@ -137,6 +138,10 @@ class S2sSessionManager:
                 if not audio_bytes or not prompt_name or not content_name:
                     debug_print("Missing required audio data properties")
                     continue
+                
+                # Debug: Log audio input processing
+                audio_length = len(audio_bytes) if audio_bytes else 0
+                debug_print(f"Processing audio input: {audio_length} bytes")
 
                 # Create the audio input event
                 audio_event = S2sEvent.audio_input(prompt_name, content_name, audio_bytes.decode('utf-8') if isinstance(audio_bytes, bytes) else audio_bytes)
@@ -177,8 +182,10 @@ class S2sSessionManager:
                     event_name = None
                     if 'event' in json_data:
                         event_name = list(json_data["event"].keys())[0]
-                        # if event_name == "audioOutput":
-                        #     print(json_data)
+                        if event_name == "audioOutput":
+                            # Log audio output length for debugging
+                            content_length = len(json_data['event']['audioOutput'].get('content', ''))
+                            debug_print(f"AudioOutput received: {content_length} chars of base64 data")
                         
                         # Log conversation-related events
                         if event_name in ['contentStart', 'textOutput', 'contentEnd']:
@@ -220,23 +227,31 @@ class S2sSessionManager:
                     await self.output_queue.put(json_data)
 
 
+            except asyncio.CancelledError:
+                # Task was cancelled during shutdown
+                debug_print("Response processing task cancelled")
+                break
             except json.JSONDecodeError as ex:
-                print(ex)
+                print(f"JSON decode error: {ex}")
                 await self.output_queue.put({"raw_data": response_data})
-            except StopAsyncIteration as ex:
-                # Stream has ended
-                print(ex)
+            except StopAsyncIteration:
+                # Stream has ended normally
+                debug_print("Stream iteration completed")
+                break
             except Exception as e:
-                # Handle ValidationException properly
-                if "ValidationException" in str(e):
-                    error_message = str(e)
-                    print(f"Validation error: {error_message}")
+                error_str = str(e)
+                if "ValidationException" in error_str:
+                    print(f"Validation error: {error_str}")
+                elif "Invalid input request" in error_str:
+                    print(f"Invalid input request (likely from interrupted session): {error_str}")
+                elif "CANCELLED" in error_str or "AWS_ERROR_UNKNOWN" in error_str:
+                    debug_print(f"Stream cancelled during cleanup: {error_str}")
                 else:
-                    print(f"Error receiving response: {e}")
+                    print(f"Error receiving response: {error_str}")
                 break
 
         self.is_active = False
-        self.close()
+        # Don't call close() here to avoid recursive calls
 
     async def processToolUse(self, toolName, toolUseContent):
         """Return the tool result"""
@@ -258,7 +273,15 @@ class S2sSessionManager:
 
             # Bedrock Knowledge Bases (RAG)
             if toolName == "getkbtool":
-                result = kb.retrieve_kb(content)
+                try:
+                    result = kb.retrieve_kb(content)
+                    if not result:
+                        result = "I don't have specific information about that topic in my knowledge base. Could you ask about something more general instead?"
+                except Exception as e:
+                    if "knowledgeBaseId" in str(e) and "None" in str(e):
+                        result = "I don't have access to a knowledge base right now, but I can still help with general questions. What would you like to know?"
+                    else:
+                        result = f"I encountered an issue accessing information: {str(e)}"
 
             # MCP integration - location search                        
             if toolName == "getlocationtool":
@@ -315,26 +338,49 @@ class S2sSessionManager:
         except Exception as e:
             print(f"Error logging session end: {e}")
         
-        # Cancel response task first
+        # Close stream input first to signal end of data
+        if self.stream:
+            try:
+                print("Closing Bedrock stream input...")
+                await asyncio.wait_for(self.stream.input_stream.close(), timeout=2.0)
+                print("Stream input closed successfully")
+            except asyncio.TimeoutError:
+                print("Stream input close timed out")
+            except Exception as e:
+                print(f"Error closing stream input: {e}")
+        
+        # Cancel and wait for audio task
+        if self.audio_task and not self.audio_task.done():
+            print("Cancelling audio processing task...")
+            self.audio_task.cancel()
+            try:
+                await asyncio.wait_for(self.audio_task, timeout=1.0)
+                print("Audio task cancelled successfully")
+            except asyncio.CancelledError:
+                print("Audio task cancelled")
+            except asyncio.TimeoutError:
+                print("Audio task cancellation timed out")
+            except Exception as e:
+                print(f"Error cancelling audio task: {e}")
+        
+        # Wait for response task to complete naturally (don't cancel)
         if self.response_task and not self.response_task.done():
-            print("Cancelling response task...")
-            self.response_task.cancel()
+            print("Waiting for response task to complete naturally...")
             try:
                 await asyncio.wait_for(self.response_task, timeout=2.0)
-            except (asyncio.CancelledError, asyncio.TimeoutError):
-                pass
+                print("Response task completed")
+            except asyncio.TimeoutError:
+                print("Response task timed out, proceeding with gentle cancellation...")
+                self.response_task.cancel()
+                try:
+                    await asyncio.wait_for(self.response_task, timeout=1.0)
+                except:
+                    pass
             except Exception as e:
                 print(f"Error waiting for response task: {e}")
         
-        # Close stream
-        if self.stream:
-            try:
-                print("Closing Bedrock stream...")
-                await asyncio.wait_for(self.stream.input_stream.close(), timeout=2.0)
-            except asyncio.TimeoutError:
-                print("Stream close timed out")
-            except Exception as e:
-                print(f"Error closing stream: {e}")
+        # Longer delay to ensure AWS CRT cleanup completes
+        await asyncio.sleep(0.3)
         
         # Clear conversation logger state for next session
         if hasattr(self.conversation_logger, 'content_tracker'):
