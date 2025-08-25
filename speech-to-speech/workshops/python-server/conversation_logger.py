@@ -134,3 +134,89 @@ class ConversationLogger:
                     f.flush()
         except Exception as e:
             print(f"Error logging session end: {e}")
+    
+    def get_last_session_history(self):
+        """Get chat history from the last session in the log file"""
+        try:
+            if not os.path.exists(self.log_file):
+                return []
+            
+            chat_history = []
+            current_session_messages = []
+            
+            with self.lock:
+                with open(self.log_file, 'r', encoding='utf-8') as f:
+                    lines = f.readlines()
+            
+            # Process lines in reverse to find the most recent session
+            in_last_session = False
+            for line in reversed(lines):
+                line = line.strip()
+                if not line:
+                    continue
+                
+                if '[SESSION_END]' in line:
+                    in_last_session = True
+                    continue
+                elif '[SESSION_START]' in line:
+                    if in_last_session:
+                        break
+                    continue
+                
+                if in_last_session:
+                    # Parse the log line: timestamp [ROLE] [STAGE]: content
+                    try:
+                        # Find the role part: [USER], [ASSISTANT], etc.
+                        role_start = line.find('[')
+                        if role_start == -1:
+                            continue
+                        
+                        role_end = line.find(']', role_start)
+                        if role_end == -1:
+                            continue
+                        
+                        # Skip timestamp
+                        timestamp_end = line.find(' [')
+                        if timestamp_end == -1:
+                            continue
+                        
+                        role_part = line[timestamp_end + 1:role_end + 1]
+                        
+                        # Skip if this is a session marker
+                        if 'SESSION_' in role_part:
+                            continue
+                        
+                        # Extract role
+                        role = role_part.strip('[]')
+                        
+                        # Find the content after the stage marker
+                        content_start = line.find(': ', role_end)
+                        if content_start == -1:
+                            continue
+                        
+                        content = line[content_start + 2:]
+                        
+                        # Convert role format for S2S events
+                        if role in ['USER', 'ASSISTANT', 'SYSTEM']:
+                            current_session_messages.append({
+                                'role': role,
+                                'content': content
+                            })
+                    
+                    except Exception as e:
+                        print(f"Error parsing log line: {e}")
+                        continue
+            
+            # Reverse to get chronological order and remove duplicates
+            seen_content = set()
+            for msg in reversed(current_session_messages):
+                # Simple deduplication by content
+                if msg['content'] not in seen_content:
+                    chat_history.append(msg)
+                    seen_content.add(msg['content'])
+            
+            return chat_history[:10]  # Limit to last 10 messages to avoid overwhelming context
+            
+        except Exception as e:
+            print(f"Error reading chat history: {e}")
+            return []

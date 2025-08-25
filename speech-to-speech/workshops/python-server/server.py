@@ -43,10 +43,34 @@ class HealthCheckHandler(http.server.BaseHTTPRequestHandler):
             logger.info(f"Responding with 200 OK to health check from {client_ip}")
             self.send_response(HTTPStatus.OK)
             self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             response = json.dumps({"status": "healthy"})
             self.wfile.write(response.encode("utf-8"))
             logger.info(f"Health check response sent: {response}")
+        elif self.path == "/chat-history":
+            logger.info(f"Chat history request from {client_ip}")
+            try:
+                # Import here to avoid circular import
+                from conversation_logger import ConversationLogger
+                chat_logger = ConversationLogger()
+                chat_history = chat_logger.get_last_session_history()
+                
+                self.send_response(HTTPStatus.OK)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                response = json.dumps(chat_history)
+                self.wfile.write(response.encode("utf-8"))
+                logger.info(f"Chat history response sent: {len(chat_history)} messages")
+            except Exception as e:
+                logger.error(f"Error serving chat history: {e}")
+                self.send_response(HTTPStatus.INTERNAL_SERVER_ERROR)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                response = json.dumps({"error": "Failed to load chat history"})
+                self.wfile.write(response.encode("utf-8"))
         else:
             logger.info(
                 f"Responding with 404 Not Found to request for {self.path} from {client_ip}"
