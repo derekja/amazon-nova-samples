@@ -96,6 +96,7 @@ def start_health_check_server(health_host, health_port):
         logger.error(f"Failed to start health check server: {e}", exc_info=True)
 
 
+
 async def websocket_handler(websocket):
     aws_region = os.getenv("AWS_DEFAULT_REGION")
     if not aws_region:

@@ -289,6 +289,7 @@ class S2sSessionManager:
             print(ex)
             return {"result": "An error occurred while attempting to retrieve information related to the toolUse event."}
     
+
     async def close(self):
         """Close the stream properly."""
         if not self.is_active:
