@@ -292,5 +292,16 @@ class S2sEvent {
     static sessionEnd() {
       return { event: { sessionEnd: {} } };
     }
+
+    static pollyRequest(text = "Hi, I'm a pirate", voice = "matthew") {
+      return {
+        event: {
+          pollyRequest: {
+            text,
+            voice
+          }
+        }
+      };
+    }
   }
   export default S2sEvent;

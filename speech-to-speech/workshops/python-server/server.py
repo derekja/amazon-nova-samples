@@ -11,6 +11,7 @@ import os
 from http import HTTPStatus
 from integration.mcp_client import McpLocationClient
 from integration.strands_agent import StrandsAgent
+from polly_service import PollyService
 
 # Configure logging
 LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
@@ -29,6 +30,7 @@ def debug_print(message):
 
 MCP_CLIENT = None
 STRANDS_AGENT = None
+POLLY_SERVICE = None
 
 class HealthCheckHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
@@ -110,8 +112,27 @@ async def websocket_handler(websocket):
                 if 'body' in data:
                     data = json.loads(data["body"])
                 if 'event' in data:
+                    event_type = list(data['event'].keys())[0]
+                    
+                    # Handle Polly requests independently (no stream manager needed)
+                    if event_type == 'pollyRequest':
+                        logger.info(f"Received Polly request: {data}")
+                        if POLLY_SERVICE:
+                            text = data['event']['pollyRequest'].get('text', 'Hi, I\'m a pirate')
+                            voice_id = data['event']['pollyRequest'].get('voice', 'Matthew')
+                            logger.info(f"Processing Polly request for text: '{text}', voice: {voice_id}")
+                            polly_response = await POLLY_SERVICE.generate_speech(text, voice_id)
+                            
+                            # Send the response back through the websocket
+                            response_json = json.dumps(polly_response)
+                            await websocket.send(response_json)
+                            logger.info("Polly response sent to client")
+                        else:
+                            logger.error("Polly service not available")
+                        continue
+                    
+                    # For all other events, ensure stream manager exists
                     if stream_manager == None:
-
                         """Handle WebSocket connections from the frontend."""
                         # Create a new stream manager for this connection
                         stream_manager = S2sSessionManager(model_id='amazon.nova-sonic-v1:0', region=aws_region, mcp_client=MCP_CLIENT, strands_agent=STRANDS_AGENT)
@@ -122,31 +143,29 @@ async def websocket_handler(websocket):
                         # Start a task to forward responses from Bedrock to the WebSocket
                         forward_task = asyncio.create_task(forward_responses(websocket, stream_manager))
 
-                        event_type = list(data['event'].keys())[0]
-                        if event_type == "audioInput":
-                            debug_print(message[0:180])
-                        else:
-                            debug_print(message)
-                            
-                    if event_type:
-                        # Store prompt name and content names if provided
-                        if event_type == 'promptStart':
-                            stream_manager.prompt_name = data['event']['promptStart']['promptName']
-                        elif event_type == 'contentStart' and data['event']['contentStart'].get('type') == 'AUDIO':
-                            stream_manager.audio_content_name = data['event']['contentStart']['contentName']
+                    if event_type == "audioInput":
+                        debug_print(message[0:180])
+                    else:
+                        debug_print(message)
                         
-                        # Handle audio input separately
-                        if event_type == 'audioInput':
-                            # Extract audio data
-                            prompt_name = data['event']['audioInput']['promptName']
-                            content_name = data['event']['audioInput']['contentName']
-                            audio_base64 = data['event']['audioInput']['content']
-                            
-                            # Add to the audio queue
-                            stream_manager.add_audio_chunk(prompt_name, content_name, audio_base64)
-                        else:
-                            # Send other events directly to Bedrock
-                            await stream_manager.send_raw_event(data)
+                    # Store prompt name and content names if provided
+                    if event_type == 'promptStart':
+                        stream_manager.prompt_name = data['event']['promptStart']['promptName']
+                    elif event_type == 'contentStart' and data['event']['contentStart'].get('type') == 'AUDIO':
+                        stream_manager.audio_content_name = data['event']['contentStart']['contentName']
+                    
+                    # Handle audio input separately
+                    if event_type == 'audioInput':
+                        # Extract audio data
+                        prompt_name = data['event']['audioInput']['promptName']
+                        content_name = data['event']['audioInput']['contentName']
+                        audio_base64 = data['event']['audioInput']['content']
+                        
+                        # Add to the audio queue
+                        stream_manager.add_audio_chunk(prompt_name, content_name, audio_base64)
+                    else:
+                        # Send other events directly to Bedrock
+                        await stream_manager.send_raw_event(data)
             except json.JSONDecodeError:
                 print("Invalid JSON received from WebSocket")
             except Exception as e:
@@ -196,6 +215,15 @@ async def main(host, port, health_port, enable_mcp=False, enable_strands_agent=F
             start_health_check_server(host, health_port)
         except Exception as ex:
             print("Failed to start health check endpoint",ex)
+    
+    # Init Polly Service
+    try:
+        global POLLY_SERVICE
+        aws_region = os.getenv("AWS_DEFAULT_REGION", "us-east-1")
+        POLLY_SERVICE = PollyService(region=aws_region)
+        print("Polly service initialized")
+    except Exception as ex:
+        print("Failed to initialize Polly service", ex)
     
     # Init MCP client
     if enable_mcp:

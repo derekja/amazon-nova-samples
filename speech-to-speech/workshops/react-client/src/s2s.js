@@ -178,6 +178,18 @@ class S2sChatBot extends React.Component {
                     });
                 }
                 break;
+            case "pollyAudioOutput":
+                try {
+                    const base64Data = message.event[eventType].content;
+                    const audioData = base64ToFloat32Array(base64Data);
+                    this.audioPlayer.playAudio(audioData);
+                } catch (error) {
+                    console.error("Error processing Polly audio chunk:", error);
+                }
+                break;
+            case "pollyError":
+                console.error("Polly error:", message.event[eventType].message);
+                break;
             case "usageEvent":
                 if (this.meterRef.current) { 
                     this.meterRef.current.updateMeter(message);
@@ -275,6 +287,11 @@ class S2sChatBot extends React.Component {
                 }
 
                 this.sendEvent(S2sEvent.contentStartAudio(promptName, audioContentName));
+
+                // Send Polly request for pirate greeting after a small delay to ensure S2S is ready
+                setTimeout(() => {
+                    this.sendEvent(S2sEvent.pollyRequest("Hi, I'm a pirate", "matthew"));
+                }, 500);
               };
 
             // Handle incoming messages
