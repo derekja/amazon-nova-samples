@@ -201,12 +201,32 @@ async def websocket_handler(websocket):
         print("WebSocket connection closed")
     finally:
         # Clean up
-        await stream_manager.close()
-        forward_task.cancel()
-        if websocket:
-            websocket.close()
+        if stream_manager:
+            try:
+                await stream_manager.close()
+            except Exception as e:
+                print(f"Error closing stream manager: {e}")
+        
+        if 'forward_task' in locals() and not forward_task.done():
+            forward_task.cancel()
+            try:
+                await forward_task
+            except asyncio.CancelledError:
+                pass
+            except Exception as e:
+                print(f"Error cancelling forward task: {e}")
+        
+        if websocket and not websocket.closed:
+            try:
+                await websocket.close()
+            except Exception as e:
+                print(f"Error closing websocket: {e}")
+        
         if MCP_CLIENT:
-            MCP_CLIENT.cleanup()
+            try:
+                MCP_CLIENT.cleanup()
+            except Exception as e:
+                print(f"Error cleaning up MCP client: {e}")
 
 
 async def forward_responses(websocket, stream_manager):

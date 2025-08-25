@@ -306,18 +306,39 @@ class S2sSessionManager:
         if not self.is_active:
             return
             
+        print("Closing S2S session manager...")
         self.is_active = False
         
         # Log session end
-        self.conversation_logger.log_session_end()
+        try:
+            self.conversation_logger.log_session_end()
+        except Exception as e:
+            print(f"Error logging session end: {e}")
         
-        if self.stream:
-            await self.stream.input_stream.close()
-        
+        # Cancel response task first
         if self.response_task and not self.response_task.done():
+            print("Cancelling response task...")
             self.response_task.cancel()
             try:
-                await self.response_task
-            except asyncio.CancelledError:
+                await asyncio.wait_for(self.response_task, timeout=2.0)
+            except (asyncio.CancelledError, asyncio.TimeoutError):
                 pass
+            except Exception as e:
+                print(f"Error waiting for response task: {e}")
+        
+        # Close stream
+        if self.stream:
+            try:
+                print("Closing Bedrock stream...")
+                await asyncio.wait_for(self.stream.input_stream.close(), timeout=2.0)
+            except asyncio.TimeoutError:
+                print("Stream close timed out")
+            except Exception as e:
+                print(f"Error closing stream: {e}")
+        
+        # Clear conversation logger state for next session
+        if hasattr(self.conversation_logger, 'content_tracker'):
+            self.conversation_logger.content_tracker.clear()
+        
+        print("S2S session manager closed")
         

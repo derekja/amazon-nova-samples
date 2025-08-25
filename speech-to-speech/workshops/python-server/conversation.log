@@ -76,3 +76,88 @@
 2025-08-24 19:33:37 [SESSION_END] Conversation session ended
 
 2025-08-24 19:33:43 [SESSION_START] New conversation session started
+
+2025-08-24 19:37:09 [SESSION_START] New conversation session started
+2025-08-24 19:37:16 [USER] [FINAL]: hi what are we making for breakfast
+2025-08-24 19:37:17 [ASSISTANT] [SPECULATIVE]: Hi! How about we make pancakes?  They're easy and delicious.
+2025-08-24 19:37:18 [ASSISTANT] [SPECULATIVE]:  You'll need flour, eggs, milk, baking powder, and a bit of sugar.
+2025-08-24 19:37:19 [ASSISTANT] [SPECULATIVE]:  Mix the dry ingredients in one bowl and the wet ones in another, then combine them.
+2025-08-24 19:37:20 [ASSISTANT] [SPECULATIVE]:  Heat a pan or griddle, add some butter, and pour the batter.
+2025-08-24 19:37:21 [ASSISTANT] [FINAL]: Hi! How about we make pancakes?  They're easy and delicious.
+2025-08-24 19:37:21 [ASSISTANT] [SPECULATIVE]:  Cook until bubbles form, then flip and cook the other side.
+2025-08-24 19:37:22 [ASSISTANT] [SPECULATIVE]:  Serve with syrup, butter, or fruit.
+2025-08-24 19:37:25 [ASSISTANT] [FINAL]:  You'll need flour, eggs, milk, baking powder, and a bit of sugar.
+2025-08-24 19:37:29 [ASSISTANT] [FINAL]:  Mix the dry ingredients in one bowl and the wet ones in another, then combine them.
+2025-08-24 19:37:32 [ASSISTANT] [FINAL]:  Heat a pan or griddle, add some butter, and pour the batter.
+2025-08-24 19:37:36 [ASSISTANT] [FINAL]:  Cook until bubbles form, then flip and cook the other side.
+2025-08-24 19:37:38 [ASSISTANT] [FINAL]:  Serve with syrup, butter, or fruit.
+2025-08-24 19:37:41 [USER] [FINAL]: that sounds pretty good but what were you telling me about last time
+2025-08-24 19:37:42 [ASSISTANT] [SPECULATIVE]: Last time, we were talking about making pizza. I gave you a recipe for it.
+2025-08-24 19:37:44 [ASSISTANT] [SPECULATIVE]:   If you want to hear it again, just let me know!
+2025-08-24 19:37:46 [ASSISTANT] [FINAL]: Last time, we were talking about making pizza. I gave you a recipe for it.
+2025-08-24 19:37:48 [ASSISTANT] [FINAL]:   If you want to hear it again, just let me know!
+2025-08-24 19:37:51 [USER] [FINAL]: oh i thought it was omelets we were making
+2025-08-24 19:37:51 [ASSISTANT] [SPECULATIVE]: Oh, I see! We talked about omelets too, but let's stick with pancakes for now.
+2025-08-24 19:37:53 [ASSISTANT] [SPECULATIVE]:   They're a great breakfast option!
+2025-08-24 19:37:56 [ASSISTANT] [FINAL]: Oh, I see! We talked about omelets too, but let's stick with pancakes for now.
+2025-08-24 19:37:58 [ASSISTANT] [FINAL]:   They're a great breakfast option!
+2025-08-24 19:38:00 [USER] [FINAL]: alright thanks
+2025-08-24 19:38:00 [ASSISTANT] [SPECULATIVE]: You're welcome! If you ever want to try making omelets or pizza, I'm here to help.
+2025-08-24 19:38:05 [ASSISTANT] [FINAL]: You're welcome! If you ever want to try making omelets or pizza, I'm here to help.
+2025-08-24 19:38:05 [SESSION_END] Conversation session ended
+
+2025-08-24 19:38:12 [SESSION_START] New conversation session started
+
+2025-08-24 19:41:14 [SESSION_START] New conversation session started
+2025-08-24 19:41:21 [USER] [FINAL]: hi what do you suggest i make for breakfast
+2025-08-24 19:41:21 [ASSISTANT] [SPECULATIVE]: Hey! How about trying out some avocado toast?  It's healthy and tasty.
+2025-08-24 19:41:23 [ASSISTANT] [SPECULATIVE]:   You'll need avocado, bread, salt, pepper, and maybe some lemon juice or cherry tomatoes.
+2025-08-24 19:41:25 [ASSISTANT] [SPECULATIVE]:   Mash the avocado in a bowl, add some seasoning, and spread it on the toast.
+2025-08-24 19:41:27 [ASSISTANT] [SPECULATIVE]:   Toast the bread if you like it crispy, then top it with the avocado.
+2025-08-24 19:41:28 [ASSISTANT] [SPECULATIVE]:   Add some lemon juice or cherry tomatoes for extra flavor.
+2025-08-24 19:41:28 [ASSISTANT] [FINAL]: Hey! How about trying out some avocado toast?  It's healthy and tasty.
+2025-08-24 19:41:28 [ASSISTANT] [FINAL]: { "interrupted" : true }
+2025-08-24 19:41:28 [ASSISTANT] [FINAL]:   You'll need avocado, bread, salt, pepper, and maybe some lemon juice or cherry tomatoes.
+2025-08-24 19:41:29 [USER] [FINAL]: or something with syrup
+2025-08-24 19:41:29 [ASSISTANT] [SPECULATIVE]: Oh, syrup sounds yummy! How about waffles?  They go great with syrup.
+2025-08-24 19:41:31 [ASSISTANT] [SPECULATIVE]:   You'll need flour, eggs, milk, baking powder, sugar, and a pinch of salt.
+2025-08-24 19:41:33 [ASSISTANT] [SPECULATIVE]:   Mix the dry ingredients in one bowl and the wet ones in another, then combine them.
+2025-08-24 19:41:34 [ASSISTANT] [SPECULATIVE]:   Heat a waffle iron, add some butter, and pour the batter.
+2025-08-24 19:41:35 [ASSISTANT] [FINAL]: Oh, syrup sounds yummy! How about waffles?  They go great with syrup.
+2025-08-24 19:41:35 [ASSISTANT] [SPECULATIVE]:   Cook until golden brown and serve with your favorite syrup.
+2025-08-24 19:41:39 [ASSISTANT] [FINAL]:   You'll need flour, eggs, milk, baking powder, sugar, and a pinch of salt.
+2025-08-24 19:41:43 [ASSISTANT] [FINAL]:   Mix the dry ingredients in one bowl and the wet ones in another, then combine them.
+2025-08-24 19:41:45 [ASSISTANT] [FINAL]: { "interrupted" : true }
+2025-08-24 19:41:45 [ASSISTANT] [FINAL]:   Heat a waffle iron, add some butter, and pour the batter.
+2025-08-24 19:41:46 [USER] [FINAL]: okay thanks
+2025-08-24 19:41:46 [ASSISTANT] [SPECULATIVE]: You're welcome! Enjoy your breakfast.
+2025-08-24 19:41:48 [ASSISTANT] [FINAL]: You're welcome! Enjoy your breakfast.
+2025-08-24 19:41:49 [SESSION_END] Conversation session ended
+
+2025-08-24 19:41:54 [SESSION_START] New conversation session started
+2025-08-24 19:42:00 [USER] [FINAL]: hey remind me what we were just thinking
+2025-08-24 19:42:00 [ASSISTANT] [SPECULATIVE]: Sure thing! We were talking about making waffles for breakfast, topped with syrup.
+2025-08-24 19:42:02 [ASSISTANT] [SPECULATIVE]:    You'll need flour, eggs, milk, baking powder, sugar, and a pinch of salt.
+2025-08-24 19:42:03 [ASSISTANT] [FINAL]: Sure thing! We were talking about making waffles for breakfast, topped with syrup.
+2025-08-24 19:42:03 [ASSISTANT] [SPECULATIVE]:    Mix the dry ingredients in one bowl and the wet ingredients in another, then combine them.
+2025-08-24 19:42:05 [ASSISTANT] [SPECULATIVE]:    Pour the batter into a preheated waffle iron and cook until golden brown.
+2025-08-24 19:42:06 [ASSISTANT] [SPECULATIVE]:    Serve with your favorite syrup and enjoy! "interrupted" :  true
+2025-08-24 19:42:06 [ASSISTANT] [FINAL]:    You'll need flour, eggs, milk, baking powder, sugar, and a pinch of salt.
+2025-08-24 19:42:06 [ASSISTANT] [FINAL]: { "interrupted" : true }
+2025-08-24 19:42:06 [ASSISTANT] [FINAL]:    Mix the dry ingredients in one bowl and the wet ingredients in another, then combine them.
+2025-08-24 19:42:07 [USER] [FINAL]: oh that's right yeah yeah yeah yeah yeah
+2025-08-24 19:42:08 [USER] [FINAL]: i wanted to make pancakes
+2025-08-24 19:42:09 [USER] [FINAL]: instead what diff
+2025-08-24 19:42:10 [ASSISTANT] [SPECULATIVE]: Pancakes are also a great choice! They're easy to make and delicious with syrup.
+2025-08-24 19:42:12 [ASSISTANT] [SPECULATIVE]:    You'll need flour, eggs, milk, baking powder, sugar, and a pinch of salt.
+2025-08-24 19:42:13 [ASSISTANT] [SPECULATIVE]:    Mix the dry ingredients in one bowl and the wet ingredients in another, then combine them.
+2025-08-24 19:42:14 [ASSISTANT] [FINAL]: Pancakes are also a great choice! They're easy to make and delicious with syrup.
+2025-08-24 19:42:14 [ASSISTANT] [SPECULATIVE]:    Pour the batter onto a hot griddle or frying pan and cook until bubbles form on the surface, then flip and cook until golden brown.
+2025-08-24 19:42:17 [ASSISTANT] [FINAL]:    You'll need flour, eggs, milk, baking powder, sugar, and a pinch of salt.
+2025-08-24 19:42:17 [ASSISTANT] [FINAL]:    Mix the dry ingredients in one bowl and the wet ingredients in another, then combine them.
+2025-08-24 19:42:18 [ASSISTANT] [FINAL]: { "interrupted" : true }
+2025-08-24 19:42:18 [ASSISTANT] [FINAL]:    Pour the batter onto a hot griddle or frying pan and cook until bubbles form on the surface, then flip and cook until golden brown.
+2025-08-24 19:42:18 [USER] [FINAL]: cool cool thanks
+2025-08-24 19:42:19 [ASSISTANT] [SPECULATIVE]: You're welcome! Enjoy your breakfast.
+2025-08-24 19:42:20 [ASSISTANT] [FINAL]: You're welcome! Enjoy your breakfast.
+2025-08-24 19:42:21 [SESSION_END] Conversation session ended
