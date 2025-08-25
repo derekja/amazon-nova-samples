@@ -10,6 +10,7 @@ from aws_sdk_bedrock_runtime.models import InvokeModelWithBidirectionalStreamInp
 from aws_sdk_bedrock_runtime.config import Config, HTTPAuthSchemeResolver, SigV4AuthScheme
 from smithy_aws_core.credentials_resolvers.environment import EnvironmentCredentialsResolver
 from integration import inline_agent, bedrock_knowledge_bases as kb
+from conversation_logger import ConversationLogger
 
 # Suppress warnings
 warnings.filterwarnings("ignore")
@@ -48,6 +49,9 @@ class S2sSessionManager:
         self.toolName = ""
         self.mcp_loc_client = mcp_client
         self.strands_agent = strands_agent
+        
+        # Initialize conversation logger
+        self.conversation_logger = ConversationLogger()
 
     def _initialize_client(self):
         """Initialize the Bedrock client."""
@@ -82,6 +86,9 @@ class S2sSessionManager:
 
             # Start processing audio input
             asyncio.create_task(self._process_audio_input())
+            
+            # Log session start
+            self.conversation_logger.log_session_start()
             
             # Wait a bit to ensure everything is set up
             await asyncio.sleep(0.1)
@@ -172,6 +179,10 @@ class S2sSessionManager:
                         event_name = list(json_data["event"].keys())[0]
                         # if event_name == "audioOutput":
                         #     print(json_data)
+                        
+                        # Log conversation-related events
+                        if event_name in ['contentStart', 'textOutput', 'contentEnd']:
+                            self.conversation_logger.log_event(json_data)
                         
                         # Handle tool use detection
                         if event_name == 'toolUse':
@@ -296,6 +307,9 @@ class S2sSessionManager:
             return
             
         self.is_active = False
+        
+        # Log session end
+        self.conversation_logger.log_session_end()
         
         if self.stream:
             await self.stream.input_stream.close()

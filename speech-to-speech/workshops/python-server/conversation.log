@@ -1,0 +1,56 @@
+
+2025-08-24 19:14:43 [SESSION_START] New conversation session started
+2025-08-24 19:14:49 [ASSISTANT] [speculative]: Hey there! How's it going today?
+2025-08-24 19:14:51 [ASSISTANT] [speculative]: Hey there! How's it going today?
+2025-08-24 19:14:54 [USER] [speculative]: good can you tell me how to make falafel
+2025-08-24 19:14:55 [ASSISTANT] [speculative]: Sure thing! Here's a basic falafel recipe. You'll need chickpeas, onions, garlic, parsley, cumin, coriander, flour, and some spices.
+2025-08-24 19:15:00 [ASSISTANT] [speculative]:  Blend the chickpeas, onions, garlic, parsley, and spices until it forms a paste.
+2025-08-24 19:15:01 [ASSISTANT] [speculative]:  Mix in the flour and shape into patties. Fry them until golden brown.
+2025-08-24 19:15:02 [ASSISTANT] [speculative]:  Enjoy!
+2025-08-24 19:15:02 [ASSISTANT] [speculative]: { "interrupted" : true }
+2025-08-24 19:15:02 [ASSISTANT] [speculative]: Sure thing! Here's a basic falafel recipe. You'll need chickpeas, onions, garlic, parsley, cumin, coriander, flour, and some spices.
+2025-08-24 19:15:02 [USER] [speculative]: it's uh instead
+2025-08-24 19:15:02 [ASSISTANT] [speculative]: Oh, got it! If you're using store-bought falafel mix instead, just follow the package instructions.
+2025-08-24 19:15:05 [ASSISTANT] [speculative]:  It's usually pretty straightforward!
+2025-08-24 19:15:09 [ASSISTANT] [speculative]: Oh, got it! If you're using store-bought falafel mix instead, just follow the package instructions.
+2025-08-24 19:15:10 [ASSISTANT] [speculative]:  It's usually pretty straightforward!
+2025-08-24 19:15:14 [USER] [speculative]: i actually wanted to make a pizza instead
+2025-08-24 19:15:15 [ASSISTANT] [speculative]: Pizza it is! Here's a simple recipe: mix flour, yeast, water, salt, and olive oil for the dough.
+2025-08-24 19:15:18 [ASSISTANT] [speculative]:  Let it rise, then roll it out and top it with tomato sauce, cheese, and your favorite toppings.
+2025-08-24 19:15:19 [ASSISTANT] [speculative]: { "interrupted" : true }
+2025-08-24 19:15:19 [ASSISTANT] [speculative]: Pizza it is! Here's a simple recipe: mix flour, yeast, water, salt, and olive oil for the dough.
+2025-08-24 19:15:21 [USER] [speculative]: maybe a sandwich actually
+2025-08-24 19:15:21 [ASSISTANT] [speculative]: Sandwiches are great! You'll need bread, your choice of fillings, and maybe some condiments.
+2025-08-24 19:15:27 [ASSISTANT] [speculative]: Sandwiches are great! You'll need bread, your choice of fillings, and maybe some condiments.
+2025-08-24 19:15:27 [SESSION_END] Conversation session ended
+
+2025-08-24 19:18:39 [SESSION_START] New conversation session started
+2025-08-24 19:18:45 [USER] [speculative]: erg how's it going
+2025-08-24 19:18:45 [ASSISTANT] [speculative]: I'm doing great, thanks for asking! Just here to chat and help out.
+2025-08-24 19:18:47 [ASSISTANT] [speculative]:  How about you?
+2025-08-24 19:18:49 [ASSISTANT] [speculative]: I'm doing great, thanks for asking! Just here to chat and help out.
+2025-08-24 19:18:50 [ASSISTANT] [speculative]:  How about you?
+2025-08-24 19:18:54 [USER] [speculative]: i'm looking to have you help me make pizza
+2025-08-24 19:18:54 [ASSISTANT] [speculative]: Oh, that sounds delicious! I can't make pizza myself, but I can definitely help you find a great recipe or guide you through the process.
+2025-08-24 19:19:02 [ASSISTANT] [speculative]: Oh, that sounds delicious! I can't make pizza myself, but I can definitely help you find a great recipe or guide you through the process.
+2025-08-24 19:19:04 [SESSION_END] Conversation session ended
+
+2025-08-24 19:20:57 [SESSION_START] New conversation session started
+2025-08-24 19:21:04 [USER] [speculative]: hey can you tell me how to make pizza
+2025-08-24 19:21:05 [ASSISTANT] [speculative]: Sure thing! First, you need to gather your ingredients: dough, sauce, cheese, and your favorite toppings.
+2025-08-24 19:21:07 [ASSISTANT] [speculative]:  Preheat your oven, roll out the dough, spread the sauce, add cheese and toppings, then bake until the crust is golden and cheese is bubbly.
+2025-08-24 19:21:09 [ASSISTANT] [speculative]:  Enjoy your homemade pizza!
+2025-08-24 19:21:11 [ASSISTANT] [speculative]: Sure thing! First, you need to gather your ingredients: dough, sauce, cheese, and your favorite toppings.
+2025-08-24 19:21:18 [ASSISTANT] [speculative]:  Preheat your oven, roll out the dough, spread the sauce, add cheese and toppings, then bake until the crust is golden and cheese is bubbly.
+2025-08-24 19:21:20 [ASSISTANT] [speculative]:  Enjoy your homemade pizza!
+2025-08-24 19:21:22 [SESSION_END] Conversation session ended
+
+2025-08-24 19:23:44 [SESSION_START] New conversation session started
+2025-08-24 19:23:50 [USER] [FINAL]: hey can you tell me how to make pizza
+2025-08-24 19:23:51 [ASSISTANT] [SPECULATIVE]: Sure thing! First, you need to gather your ingredients: dough, sauce, cheese, and your favorite toppings.
+2025-08-24 19:23:54 [ASSISTANT] [SPECULATIVE]:  Preheat your oven, roll out the dough, spread the sauce, add cheese and toppings, then bake until the crust is golden and cheese is bubbly.
+2025-08-24 19:23:56 [ASSISTANT] [SPECULATIVE]:  Enjoy your homemade pizza!
+2025-08-24 19:23:58 [ASSISTANT] [FINAL]: Sure thing! First, you need to gather your ingredients: dough, sauce, cheese, and your favorite toppings.
+2025-08-24 19:24:06 [ASSISTANT] [FINAL]:  Preheat your oven, roll out the dough, spread the sauce, add cheese and toppings, then bake until the crust is golden and cheese is bubbly.
+2025-08-24 19:24:08 [ASSISTANT] [FINAL]:  Enjoy your homemade pizza!
+2025-08-24 19:24:09 [SESSION_END] Conversation session ended
